@@ -8,4 +8,4 @@ router.post('/', validateApplicationPayload, createApplicationHandler);
 router.get('/:id', getApplicationHandler);
 router.patch('/:id', validateApplicationUpdate, updateApplicationHandler);
 
-module.exports = router;
+module.exports = router; 
