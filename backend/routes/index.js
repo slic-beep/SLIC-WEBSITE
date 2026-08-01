@@ -1,9 +1,22 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+/* GET/HEAD home page. */
+function sendHomeResponse(req, res) {
+  res.status(200).json({
+    success: true,
+    message: 'SLIC backend is running',
+    endpoints: {
+      health: '/api/health',
+      heroImages: '/api/hero-images',
+      impactMetrics: '/api/impact-metrics',
+    },
+  });
+}
+
+router.get('/', sendHomeResponse);
+router.head('/', function(req, res) {
+  res.status(200).end();
 });
 
 module.exports = router;

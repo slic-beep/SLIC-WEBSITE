@@ -10,8 +10,8 @@ services:
     envVars:
       - key: NODE_VERSION
         value: 20
-      - key: NEXT_PUBLIC_API_URL
-        value: https://YOUR_BACKEND_URL.onrender.com/api
+      - key: NEXT_PUBLIC_API_URLs
+        value: https://slic-backend.onrender.com/api
 
   - type: web
     name: slic-admin
@@ -25,7 +25,7 @@ services:
       - key: NODE_VERSION
         value: 20
       - key: NEXT_PUBLIC_API_URL
-        value: https://YOUR_BACKEND_URL.onrender.com/api
+        value: https://slic-backend.onrender.com/api
 
   - type: web
     name: slic-backend
