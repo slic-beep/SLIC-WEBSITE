@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { siteConfig } from "@/lib/constants";
 
 export default function Footer() {
@@ -8,8 +9,8 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-riara-500 to-pink-400 flex items-center justify-center text-white font-bold text-sm">
-                S
+              <div className="relative h-8 w-8 overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-gray-200">
+                <Image src="/logo.png" alt="SLIC logo" fill className="object-contain p-1" sizes="32px" />
               </div>
               <span className="font-bold text-lg text-gray-900">SLIC</span>
             </div>

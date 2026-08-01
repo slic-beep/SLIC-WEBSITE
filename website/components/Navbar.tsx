@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
 
@@ -35,8 +36,8 @@ export default function Navbar() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
         {/* Logo */}
         <a href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-riara-500 to-pink-400 flex items-center justify-center text-white font-bold text-sm group-hover:shadow-lg group-hover:shadow-riara-500/30 transition-shadow duration-300">
-            S
+          <div className="relative h-8 w-8 overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-gray-200">
+            <Image src="/logo.png" alt="SLIC logo" fill className="object-contain p-1" sizes="32px" />
           </div>
           <span className="font-bold text-lg text-gray-900 hidden sm:block">
             SLIC

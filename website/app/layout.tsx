@@ -16,6 +16,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "SLIC | Student-Led Innovation Club — Riara University",
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
   description:
     "Student-Led Innovation Club at Riara University. Empowering students to transform ideas into projects, startups, and impactful solutions. Innovate. Collaborate. Lead.",
   keywords: [
