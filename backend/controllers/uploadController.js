@@ -17,7 +17,7 @@ async function uploadFileHandler(req, res) {
       file.data,
       file.name,
       file.mimetype,
-      [],
+      ['read("any")'],
       null
     );
 

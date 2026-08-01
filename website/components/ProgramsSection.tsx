@@ -10,6 +10,24 @@ interface ProgramsSectionProps {
   showHeader?: boolean;
 }
 
+function getSafeThumbnailUrl(thumbnail: unknown): string | null {
+  if (typeof thumbnail !== 'string') return null;
+
+  const value = thumbnail.trim();
+  if (!value) return null;
+  if (/\s/.test(value)) return null;
+
+  if (/^(https?:\/\/|\/\/)/i.test(value) || value.startsWith('/')) {
+    return value;
+  }
+
+  if (/\.(png|jpe?g|gif|webp|svg|avif)(\?.*)?$/i.test(value)) {
+    return value;
+  }
+
+  return null;
+}
+
 export default function ProgramsSection({
   limit = 4,
   showViewAll = true,
@@ -71,6 +89,20 @@ export default function ProgramsSection({
                     borderLeft: '4px solid #7c3aed',
                   }}
                 >
+                  {(() => {
+                    const thumbnail = getSafeThumbnailUrl(program.thumbnail);
+                    return thumbnail ? (
+                      <div className="relative w-full h-36 rounded-lg overflow-hidden mb-4">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={thumbnail}
+                          alt={String(program.title || 'SLIC Program')}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      </div>
+                    ) : null;
+                  })()}
                   <div
                     className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl opacity-0 group-hover:opacity-100 transition-all duration-500"
                     style={{

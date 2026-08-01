@@ -116,6 +116,15 @@ export default function InnovationHubSection({
                     className="glass-card rounded-xl p-6 relative group cursor-pointer animate-fade-in-up"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
+                    {(() => {
+                      const img = String(project.projectImage || project.image || '');
+                      return img ? (
+                        <div className="relative w-full h-36 rounded-lg overflow-hidden mb-4">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={img} alt={String(project.title || 'Innovation Project')} className="w-full h-full object-cover" />
+                        </div>
+                      ) : null;
+                    })()}
                     <div className="relative z-10">
                       <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-riara-500 transition-colors duration-300">
                         {String(project.title || 'Innovation Project')}

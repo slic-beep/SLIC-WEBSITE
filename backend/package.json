@@ -5,6 +5,8 @@
   "scripts": {
     "start": "node ./app.js",
     "setup:appwrite": "node ./scripts/setup-appwrite.js",
+    "setup:heroimages": "node ./scripts/setup-heroimages.js",
+    "setup:impact-metrics": "node ./scripts/setup-impact-metrics.js",
     "setup:buckets": "node ./scripts/create-buckets.js"
   },
   "dependencies": {

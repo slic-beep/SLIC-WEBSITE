@@ -39,6 +39,7 @@ async function main() {
 
   const buckets = [
     ['profile-images', 'Profile Images'],
+    ['program-thumbnails', 'Program Thumbnails'],
   ];
 
   for (const [id, name] of buckets) {

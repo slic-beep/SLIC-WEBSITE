@@ -39,6 +39,32 @@ async function postJson<T>(path: string, payload: Record<string, unknown>): Prom
   return response.json();
 }
 
+async function putJson<T>(path: string, payload: Record<string, unknown>): Promise<ApiResponse<T>> {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error('Unable to update data in the SLIC API');
+  }
+
+  return response.json();
+}
+
+async function deleteJson<T>(path: string): Promise<ApiResponse<T>> {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method: 'DELETE',
+  });
+
+  if (!response.ok) {
+    throw new Error('Unable to delete data from the SLIC API');
+  }
+
+  return response.json();
+}
+
 export type Member = {
   $id: string;
   name: string;
@@ -111,6 +137,26 @@ export type Partner = {
   createdAt?: string;
 };
 
+export type HeroImage = {
+  $id: string;
+  title?: string;
+  caption?: string;
+  imageUrl?: string;
+  order?: number;
+  status?: string;
+  createdAt?: string;
+};
+
+export type ImpactMetric = {
+  $id: string;
+  label?: string;
+  value?: number;
+  suffix?: string;
+  order?: number;
+  status?: string;
+  createdAt?: string;
+};
+
 export type Application = {
   $id: string;
   name: string;
@@ -121,6 +167,19 @@ export type Application = {
   reviewedBy?: string;
   applicantId?: string;
   applicationType?: string;
+};
+
+export type Leader = {
+  $id: string;
+  name: string;
+  role: string;
+  bio?: string;
+  image?: string;
+  socialLinkedin?: string;
+  socialTwitter?: string;
+  sortOrder?: number;
+  status?: string;
+  createdAt?: string;
 };
 
 export type RecentActivity = {
@@ -207,6 +266,40 @@ export async function createPartner(payload: Record<string, unknown>) {
   return postJson<Partner>('/partners', payload);
 }
 
+export async function getHeroImages() {
+  const response = await fetchJson<unknown>('/hero-images');
+  return normalizeListResponse<HeroImage>(response);
+}
+
+export async function createHeroImage(payload: Record<string, unknown>) {
+  return postJson<HeroImage>('/hero-images', payload);
+}
+
+export async function updateHeroImage(id: string, payload: Record<string, unknown>) {
+  return putJson<HeroImage>(`/hero-images/${id}`, payload);
+}
+
+export async function deleteHeroImage(id: string) {
+  return deleteJson<HeroImage>(`/hero-images/${id}`);
+}
+
+export async function getImpactMetrics() {
+  const response = await fetchJson<unknown>('/impact-metrics');
+  return normalizeListResponse<ImpactMetric>(response);
+}
+
+export async function createImpactMetric(payload: Record<string, unknown>) {
+  return postJson<ImpactMetric>('/impact-metrics', payload);
+}
+
+export async function updateImpactMetric(id: string, payload: Record<string, unknown>) {
+  return putJson<ImpactMetric>(`/impact-metrics/${id}`, payload);
+}
+
+export async function deleteImpactMetric(id: string) {
+  return deleteJson<ImpactMetric>(`/impact-metrics/${id}`);
+}
+
 export async function getApplications() {
   const response = await fetchJson<unknown>('/applications');
   return normalizeListResponse<Application>(response);
@@ -214,6 +307,33 @@ export async function getApplications() {
 
 export async function createApplication(payload: Record<string, unknown>) {
   return postJson<Application>('/applications', payload);
+}
+
+// ─── Leadership ───
+
+export async function getLeadership() {
+  const response = await fetchJson<unknown>('/leadership');
+  return normalizeListResponse<Leader>(response);
+}
+
+export async function createLeader(payload: Record<string, unknown>) {
+  return postJson<Leader>('/leadership', payload);
+}
+
+// ─── File upload (device → URL) ───
+
+export async function uploadFile(file: File, bucket = 'profileImages') {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('bucket', bucket);
+
+  const response = await fetch(`${API_BASE_URL}/upload`, {
+    method: 'POST',
+    body: formData,
+  });
+  const payload = await response.json();
+  if (!response.ok) throw new Error(payload?.message || 'Upload failed');
+  return payload as ApiResponse<{ fileId: string; url: string; name: string }>;
 }
 
 export async function getRecentActivities() {

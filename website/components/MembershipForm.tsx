@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { register } from "@/lib/api";
 import { useToast } from "./Toast";
 import { useAuth } from "@/lib/auth-context";
@@ -60,6 +61,7 @@ const inputError =
   "border-red-400 focus:border-red-500 focus:ring-1 focus:ring-red-500/20 bg-red-50/30";
 
 export default function MembershipForm({ onClose }: MembershipFormProps) {
+  const router = useRouter();
   const { toast } = useToast();
   const { login } = useAuth();
   const [submitting, setSubmitting] = useState(false);
@@ -126,7 +128,10 @@ export default function MembershipForm({ onClose }: MembershipFormProps) {
       }
 
       setSubmitted(true);
+      onClose();
       toast("Account created! You're now logged in.", "success");
+      // Take the new member straight to their dashboard.
+      setTimeout(() => router.push("/member/dashboard"), 1200);
     } catch (err) {
       toast(err instanceof Error ? err.message : "Registration failed. Please try again.", "error");
     } finally {

@@ -1,9 +1,44 @@
 "use client";
 
-import { impactMetrics } from "@/lib/constants";
+import { useEffect, useState } from "react";
+import { getPublicImpactMetrics } from "@/lib/api";
 import MetricCounter from "./MetricCounter";
 
+const fallbackMetrics = [
+  { label: "Students Engaged", value: 500, suffix: "+" },
+  { label: "Projects Created", value: 45, suffix: "+" },
+  { label: "Innovation Workshops", value: 30, suffix: "+" },
+  { label: "Industry Connections", value: 25, suffix: "+" },
+  { label: "Startups Supported", value: 12, suffix: "" },
+];
+
 export default function ImpactSection() {
+  const [impactMetrics, setImpactMetrics] = useState(fallbackMetrics);
+
+  useEffect(() => {
+    async function loadMetrics() {
+      try {
+        const response = await getPublicImpactMetrics();
+        const metrics = Array.isArray(response?.data) ? response.data : [];
+        if (metrics.length > 0) {
+          setImpactMetrics(
+            metrics
+              .filter((metric: Record<string, unknown>) => metric.status !== "Inactive")
+              .map((metric: Record<string, unknown>) => ({
+                label: String(metric.label || "Impact metric"),
+                value: Number(metric.value || 0),
+                suffix: String(metric.suffix || ""),
+              }))
+          );
+        }
+      } catch {
+        setImpactMetrics(fallbackMetrics);
+      }
+    }
+
+    loadMetrics();
+  }, []);
+
   return (
     <section id="impact" className="py-20 bg-white relative overflow-hidden">
       {/* Gradient Orb Background Effect */}

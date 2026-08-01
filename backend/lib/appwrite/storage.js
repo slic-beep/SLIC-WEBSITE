@@ -1,55 +1,42 @@
-const { appwriteRequest, getAppwriteConfig } = require('./client');
+const { Client, Storage, ID } = require('node-appwrite');
+const { InputFile } = require('node-appwrite/file');
+const { getAppwriteConfig } = require('./client');
+
+function getStorageClient() {
+  const { endpoint, projectId, apiKey } = getAppwriteConfig();
+  const client = new Client();
+  client.setEndpoint(endpoint).setProject(projectId).setKey(apiKey);
+  return new Storage(client);
+}
 
 async function createFile(bucketId, fileBuffer, filename, mimeType, permissions = [], sessionToken = null) {
-  const { endpoint, projectId, apiKey } = getAppwriteConfig();
-  const formData = new FormData();
-  const file = new Blob([fileBuffer], { type: mimeType });
-  formData.append('file', file, filename);
-  formData.append('permissions', JSON.stringify(permissions));
+  const { bucketIds } = getAppwriteConfig();
+  const resolvedBucketId = bucketIds[bucketId] || bucketId;
+  const storage = getStorageClient();
+  const resolvedPermissions = Array.isArray(permissions) && permissions.length > 0
+    ? permissions
+    : ['read("any")'];
 
-  const headers = {
-    'X-Appwrite-Project': projectId,
-    ...(apiKey ? { 'X-Appwrite-Key': apiKey } : {}),
-    ...(sessionToken ? { 'X-Appwrite-Session': sessionToken } : {}),
-  };
+  const result = await storage.createFile(
+    resolvedBucketId,
+    ID.unique(),
+    InputFile.fromBuffer(fileBuffer, filename),
+    resolvedPermissions
+  );
 
-  const response = await fetch(`${endpoint}/storage/buckets/${bucketId}/files`, {
-    method: 'POST',
-    headers,
-    body: formData,
-  });
+  const endpoint = getAppwriteConfig().endpoint.endsWith('/')
+    ? getAppwriteConfig().endpoint
+    : `${getAppwriteConfig().endpoint}/`;
+  const url = `${endpoint}storage/buckets/${resolvedBucketId}/files/${result.$id}/view?project=${getAppwriteConfig().projectId}`;
 
-  const text = await response.text();
-  let payload = null;
-  if (text) {
-    try {
-      payload = JSON.parse(text);
-    } catch (error) {
-      payload = text;
-    }
-  }
-
-  if (!response.ok) {
-    const message = payload && payload.message ? payload.message : 'File upload failed';
-    const error = new Error(message);
-    error.status = response.status;
-    error.payload = payload;
-    throw error;
-  }
-
-  return payload;
+  return { ...result, url };
 }
 
 async function getFilePreview(bucketId, fileId, width = 400, height = 400) {
-  const { endpoint, projectId, apiKey } = getAppwriteConfig();
-  const response = await fetch(`${endpoint}/storage/buckets/${bucketId}/files/${fileId}/preview?width=${width}&height=${height}`, {
-    headers: {
-      'X-Appwrite-Project': projectId,
-      ...(apiKey ? { 'X-Appwrite-Key': apiKey } : {}),
-    },
-  });
-
-  return response;
+  const { bucketIds } = getAppwriteConfig();
+  const resolvedBucketId = bucketIds[bucketId] || bucketId;
+  const storage = getStorageClient();
+  return storage.getFilePreview(resolvedBucketId, fileId, width, height);
 }
 
 module.exports = {

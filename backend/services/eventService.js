@@ -9,6 +9,11 @@ function normalizeEvent(event) {
   return {
     ...event,
     name: event.name || event.title || '',
+    time: event.time || '',
+    eventType: event.eventType || '',
+    bannerImage: event.bannerImage || '',
+    registrationLink: event.registrationLink || '',
+    maxParticipants: event.maxParticipants ?? null,
   };
 }
 
@@ -22,8 +27,13 @@ async function createEvent(payload) {
   const eventData = {
     title: payload.name || payload.title || '',
     description: payload.description || '',
+    eventType: payload.eventType || '',
     date: payload.date || '',
+    time: payload.time || '',
     location: payload.location || '',
+    bannerImage: payload.bannerImage || '',
+    registrationLink: payload.registrationLink || '',
+    maxParticipants: payload.maxParticipants ?? null,
     status: payload.status || 'Upcoming',
     createdAt: payload.createdAt || new Date().toISOString(),
   };

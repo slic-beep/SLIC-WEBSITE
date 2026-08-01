@@ -103,14 +103,19 @@ export default function PartnersSection({
                   >
                     <div className="glass-card rounded-2xl p-7 h-full flex flex-col items-center justify-center text-center group">
                       <div
-                        className="w-16 h-16 rounded-xl flex items-center justify-center text-xl font-bold mb-4 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3"
+                        className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl flex items-center justify-center text-xl font-bold mb-5 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 overflow-hidden shadow-sm"
                         style={{
                           background: "linear-gradient(135deg, rgba(124,58,237,0.1), rgba(236,72,153,0.1))",
                           border: "1px solid #e5e7eb",
                           color: "#7c3aed",
                         }}
                       >
-                        {String(partner.name || "P").charAt(0).toUpperCase()}
+                        {String(partner.logo || "") ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={String(partner.logo)} alt={String(partner.name || "Partner")} className="w-full h-full object-contain p-3" />
+                        ) : (
+                          String(partner.name || "P").charAt(0).toUpperCase()
+                        )}
                       </div>
 
                       <h3 className="text-gray-900 font-semibold text-lg mb-3">

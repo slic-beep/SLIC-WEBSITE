@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { getPublicHeroImages } from "@/lib/api";
 import { siteConfig } from "@/lib/constants";
 
-const heroImages = [
+const fallbackHeroImages = [
   "/images/image1.jpeg",
   "/images/image2.jpeg",
   "/images/image3.jpeg",
@@ -15,15 +16,35 @@ const heroImages = [
 
 export default function HeroSection() {
   const particlesRef = useRef<HTMLDivElement>(null);
+  const [heroImages, setHeroImages] = useState<Array<{ imageUrl?: string; title?: string; caption?: string }>>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    async function loadHeroImages() {
+      try {
+        const response = await getPublicHeroImages();
+        const images = (response?.data ?? []).filter((item) => item.imageUrl || item.image || item.url);
+        if (images.length > 0) {
+          setHeroImages(images as Array<{ imageUrl?: string; title?: string; caption?: string }>);
+        } else {
+          setHeroImages(fallbackHeroImages.map((src) => ({ imageUrl: src })));
+        }
+      } catch {
+        setHeroImages(fallbackHeroImages.map((src) => ({ imageUrl: src })));
+      }
+    }
+
+    loadHeroImages();
+  }, []);
 
   // Image carousel rotation
   useEffect(() => {
+    if (heroImages.length === 0) return;
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % heroImages.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [heroImages.length]);
 
   // Floating particles
   useEffect(() => {
@@ -56,20 +77,23 @@ export default function HeroSection() {
     <section className="relative min-h-screen flex items-center overflow-hidden bg-white">
       {/* Background Image Carousel */}
       <div className="absolute inset-0">
-        {heroImages.map((src, i) => (
-          <div
-            key={src}
-            className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
-            style={{ opacity: i === currentIndex ? 1 : 0 }}
-          >
-            <img
-              src={src}
-              alt=""
-              className="w-full h-full object-scale-down bg-black"
-              loading={i === 0 ? "eager" : "lazy"}
-            />
-          </div>
-        ))}
+        {heroImages.map((image, i) => {
+          const src = image.imageUrl || "";
+          return (
+            <div
+              key={`${src}-${i}`}
+              className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+              style={{ opacity: i === currentIndex ? 1 : 0 }}
+            >
+              <img
+                src={src}
+                alt={image.title || "SLIC hero image"}
+                className="w-full h-full object-cover bg-black"
+                loading={i === 0 ? "eager" : "lazy"}
+              />
+            </div>
+          );
+        })}
         {/* Dark overlay for readability */}
         <div className="absolute inset-0 bg-black/50" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent" />
@@ -135,20 +159,22 @@ export default function HeroSection() {
         </div>
 
         {/* Carousel indicators */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
-          {heroImages.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrentIndex(i)}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                i === currentIndex
-                  ? "w-8 bg-white"
-                  : "w-2 bg-white/40 hover:bg-white/60"
-              }`}
-              aria-label={`Image ${i + 1}`}
-            />
-          ))}
-        </div>
+        {heroImages.length > 1 && (
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
+            {heroImages.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentIndex(i)}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  i === currentIndex
+                    ? "w-8 bg-white"
+                    : "w-2 bg-white/40 hover:bg-white/60"
+                }`}
+                aria-label={`Image ${i + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Bottom gradient fade */}

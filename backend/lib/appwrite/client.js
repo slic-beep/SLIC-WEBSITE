@@ -16,9 +16,16 @@ function getAppwriteConfig() {
       partners: process.env.APPWRITE_COLLECTION_PARTNERS_ID || 'partners',
       announcements: process.env.APPWRITE_COLLECTION_ANNOUNCEMENTS_ID || 'announcements',
       reports: process.env.APPWRITE_COLLECTION_REPORTS_ID || 'reports',
+      leadership: process.env.APPWRITE_COLLECTION_LEADERSHIP_ID || 'leadership',
+      heroImages: process.env.APPWRITE_COLLECTION_HERO_IMAGES_ID || 'hero-images',
+      impactMetrics: process.env.APPWRITE_COLLECTION_IMPACT_METRICS_ID || 'impact-metrics',
     },
     bucketIds: {
       profileImages: process.env.APPWRITE_BUCKET_PROFILE_IMAGES_ID || 'profile-images',
+      programThumbnails:
+        process.env.APPWRITE_BUCKET_PROGRAM_THUMBNAILS_ID ||
+        process.env.APPWRITE_BUCKET_PROFILE_IMAGES_ID ||
+        'profile-images',
       projectImages:
         process.env.APPWRITE_BUCKET_PROJECT_IMAGES_ID ||
         process.env.APPWRITE_BUCKET_PROFILE_IMAGES_ID ||
@@ -41,11 +48,13 @@ async function appwriteRequest(pathname, options = {}, sessionToken = null) {
   const url = new URL(pathname.replace(/^\/+/, ''), baseUrl);
 
   const bodyIsFormData = options.body && typeof FormData !== 'undefined' && options.body instanceof FormData;
+  // When a user session token is present, scope the request to that user and do NOT
+  // send the server API key — mixing X-Appwrite-Key with X-Appwrite-Session causes
+  // Appwrite to reject user-scoped requests (e.g. GET /account -> 401).
   const headers = {
     ...(bodyIsFormData ? {} : { 'Content-Type': 'application/json' }),
     'X-Appwrite-Project': projectId,
-    ...(apiKey ? { 'X-Appwrite-Key': apiKey } : {}),
-    ...(sessionToken ? { 'X-Appwrite-Session': sessionToken } : {}),
+    ...(sessionToken ? { 'X-Appwrite-Session': sessionToken } : apiKey ? { 'X-Appwrite-Key': apiKey } : {}),
     ...(options.headers || {}),
   };
 

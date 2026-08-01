@@ -10,6 +10,7 @@ import {
   IconPrograms,
   IconHandshake,
   IconApplications,
+  IconLeader,
 } from "@/components/Icon";
 
 const groupedNav = [
@@ -27,6 +28,9 @@ const groupedNav = [
       { label: "Events", icon: <IconCalendar className="w-5 h-5" />, href: "/events" },
       { label: "Programs", icon: <IconPrograms className="w-5 h-5" />, href: "/programs" },
       { label: "Partners", icon: <IconHandshake className="w-5 h-5" />, href: "/partners" },
+      { label: "Hero Images", icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10l3 3 2-2 4 4"/></svg>, href: "/hero-images" },
+      { label: "Impact Metrics", icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 19h16M7 15l3-4 3 2 4-6"/></svg>, href: "/impact-metrics" },
+      { label: "Leadership", icon: <IconLeader className="w-5 h-5" />, href: "/leadership" },
       { label: "Applications", icon: <IconApplications className="w-5 h-5" />, href: "/applications" },
     ],
   },

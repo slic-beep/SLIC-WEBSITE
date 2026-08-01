@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import AdminPageShell from "@/components/AdminPageShell";
+import ImageUpload from "@/components/ImageUpload";
 import { Partner, createPartner, getPartners } from "@/lib/api";
 
 export default function PartnersPage() {
@@ -111,16 +112,7 @@ export default function PartnersPage() {
                 required
               />
             </div>
-            <div>
-              <label className="text-xs text-gray-500">Logo URL</label>
-              <input
-                type="url"
-                value={logo}
-                onChange={(event) => setLogo(event.target.value)}
-                className="mt-1 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none focus:border-riara-400"
-                placeholder="https://example.com/logo.png"
-              />
-            </div>
+            <ImageUpload value={logo} onChange={setLogo} bucket="partnerLogos" label="Logo" />
             <div>
               <label className="text-xs text-gray-500">Category</label>
               <input

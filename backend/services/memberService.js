@@ -44,7 +44,8 @@ async function listMembers() {
 
 async function createMember(payload) {
   const memberData = {
-    userId: payload.userId || payload.email || payload.name || crypto.randomUUID(),
+    // The student ID is the user's primary identifier — use it as userId when provided.
+    userId: payload.userId || payload.studentId || payload.email || payload.name || crypto.randomUUID(),
     fullName: payload.fullName || payload.name || '',
     email: payload.email || '',
     phoneNumber: payload.phoneNumber || '',

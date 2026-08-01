@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import AdminPageShell from "@/components/AdminPageShell";
+import ImageUpload from "@/components/ImageUpload";
 import { Program, createProgram, getPrograms } from "@/lib/api";
 
 export default function ProgramsPage() {
@@ -111,26 +112,16 @@ export default function ProgramsPage() {
                 placeholder="Design, Business, Tech"
               />
             </div>
-            <div className="grid gap-3 lg:grid-cols-2">
-              <div>
-                <label className="text-xs text-gray-500">Duration</label>
-                <input
-                  value={duration}
-                  onChange={(event) => setDuration(event.target.value)}
-                  className="mt-1 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none focus:border-riara-400"
-                  placeholder="6 weeks"
-                />
-              </div>
-              <div>
-                <label className="text-xs text-gray-500">Thumbnail URL</label>
-                <input
-                  value={thumbnail}
-                  onChange={(event) => setThumbnail(event.target.value)}
-                  className="mt-1 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none focus:border-riara-400"
-                  placeholder="https://..."
-                />
-              </div>
+            <div>
+              <label className="text-xs text-gray-500">Duration</label>
+              <input
+                value={duration}
+                onChange={(event) => setDuration(event.target.value)}
+                className="mt-1 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none focus:border-riara-400"
+                placeholder="6 weeks"
+              />
             </div>
+            <ImageUpload value={thumbnail} onChange={setThumbnail} bucket="programThumbnails" label="Thumbnail image" />
             <div>
               <label className="text-xs text-gray-500">Requirements</label>
               <textarea

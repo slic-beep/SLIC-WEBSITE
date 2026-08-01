@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import AdminPageShell from "@/components/AdminPageShell";
+import ImageUpload from "@/components/ImageUpload";
 import { EventRecord, createEvent, getEvents } from "@/lib/api";
 
 export default function EventsPage() {
@@ -162,15 +163,7 @@ export default function EventsPage() {
                 required
               />
             </div>
-            <div>
-              <label className="text-xs text-gray-500">Banner image URL</label>
-              <input
-                value={bannerImage}
-                onChange={(event) => setBannerImage(event.target.value)}
-                className="mt-1 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none focus:border-riara-400"
-                placeholder="https://..."
-              />
-            </div>
+            <ImageUpload value={bannerImage} onChange={setBannerImage} bucket="eventBanners" label="Banner image" />
             <div>
               <label className="text-xs text-gray-500">Registration link</label>
               <input

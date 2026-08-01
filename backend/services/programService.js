@@ -5,11 +5,30 @@ function getCollectionId() {
   return getAppwriteConfig().collectionIds.programs;
 }
 
+function sanitizeThumbnail(value) {
+  if (typeof value !== 'string') return '';
+
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+  if (/\s/.test(trimmed)) return '';
+
+  if (/^(https?:\/\/|\/\/)/i.test(trimmed) || trimmed.startsWith('/')) {
+    return trimmed;
+  }
+
+  if (/\.(png|jpe?g|gif|webp|svg|avif)(\?.*)?$/i.test(trimmed)) {
+    return trimmed;
+  }
+
+  return '';
+}
+
 function normalizeProgram(program) {
   return {
     ...program,
     title: program.title || '',
     description: program.description || '',
+    thumbnail: sanitizeThumbnail(program.thumbnail),
     startDate: program.startDate || program.duration || '',
     status: program.status || '',
     createdAt: program.createdAt || '',
@@ -26,6 +45,7 @@ async function createProgram(payload) {
   const programData = {
     title: payload.title || '',
     description: payload.description || '',
+    thumbnail: sanitizeThumbnail(payload.thumbnail),
     duration: payload.startDate || payload.duration || '',
     status: payload.status || 'Active',
     createdAt: payload.createdAt || new Date().toISOString(),

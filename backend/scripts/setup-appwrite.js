@@ -209,6 +209,32 @@ async function main() {
     },
     {
       collectionId: ID.unique(),
+      name: 'hero-images',
+      attributes: [
+        { key: 'title', type: 'string', size: 255, required: false },
+        { key: 'caption', type: 'string', size: 1000, required: false },
+        { key: 'imageUrl', type: 'string', size: 512, required: true },
+        { key: 'order', type: 'integer', required: false },
+        { key: 'status', type: 'string', size: 32, required: false },
+        { key: 'createdAt', type: 'datetime', required: false },
+      ],
+      indexes: [{ key: 'order_index', type: 'key', attributes: ['order'] }],
+    },
+    {
+      collectionId: ID.unique(),
+      name: 'impact-metrics',
+      attributes: [
+        { key: 'label', type: 'string', size: 255, required: true },
+        { key: 'value', type: 'integer', required: false },
+        { key: 'suffix', type: 'string', size: 32, required: false },
+        { key: 'order', type: 'integer', required: false },
+        { key: 'status', type: 'string', size: 32, required: false },
+        { key: 'createdAt', type: 'datetime', required: false },
+      ],
+      indexes: [{ key: 'order_index', type: 'key', attributes: ['order'] }],
+    },
+    {
+      collectionId: ID.unique(),
       name: 'reports',
       attributes: [
         { key: 'month', type: 'string', size: 64, required: true },

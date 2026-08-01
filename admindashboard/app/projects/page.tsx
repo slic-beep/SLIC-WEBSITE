@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import AdminPageShell from "@/components/AdminPageShell";
+import ImageUpload from "@/components/ImageUpload";
 import { Project, createProject, getProjects } from "@/lib/api";
 
 export default function ProjectsPage() {
@@ -154,26 +155,16 @@ export default function ProjectsPage() {
                 placeholder="Alice, Bob, Carol"
               />
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs text-gray-500">Stage</label>
-                <input
-                  value={stage}
-                  onChange={(event) => setStage(event.target.value)}
-                  className="mt-1 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none focus:border-riara-400"
-                  placeholder="Ideation, MVP, Scaling"
-                />
-              </div>
-              <div>
-                <label className="text-xs text-gray-500">Project image</label>
-                <input
-                  value={projectImage}
-                  onChange={(event) => setProjectImage(event.target.value)}
-                  className="mt-1 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none focus:border-riara-400"
-                  placeholder="https://..."
-                />
-              </div>
+            <div>
+              <label className="text-xs text-gray-500">Stage</label>
+              <input
+                value={stage}
+                onChange={(event) => setStage(event.target.value)}
+                className="mt-1 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none focus:border-riara-400"
+                placeholder="Ideation, MVP, Scaling"
+              />
             </div>
+            <ImageUpload value={projectImage} onChange={setProjectImage} bucket="projectImages" label="Project image" />
             <div>
               <label className="text-xs text-gray-500">Created by</label>
               <input

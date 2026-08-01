@@ -40,6 +40,14 @@ export const IconApplications = ({ className = "w-6 h-6" }: { className?: string
   </svg>
 );
 
+export const IconLeader = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="7" r="4" strokeWidth={1.5} />
+    <path d="M5 21v-2a4 4 0 014-4h6a4 4 0 014 4v2" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M12 17v4" strokeWidth={1.5} strokeLinecap="round" />
+  </svg>
+);
+
 export default {
   IconUsers,
   IconRocket,

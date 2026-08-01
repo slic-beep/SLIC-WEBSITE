@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { teamMembers } from "@/lib/constants";
+import { useEffect, useRef, useState } from "react";
+import { getPublicLeadership } from "@/lib/api";
 import SectionHeader from "./SectionHeader";
 import ViewAllButton from "./ViewAllButton";
 
@@ -43,8 +43,28 @@ export default function LeadershipSection({
   showHeader = true,
 }: LeadershipSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const [leaders, setLeaders] = useState<Array<Record<string, unknown>>>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    async function loadLeaders() {
+      try {
+        const result = await getPublicLeadership();
+        setLeaders(result?.data ?? []);
+      } catch (err) {
+        setError("Unable to load the team right now.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadLeaders();
+  }, []);
+
+  useEffect(() => {
+    if (loading || !sectionRef.current) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -62,11 +82,11 @@ export default function LeadershipSection({
       { threshold: 0.1 }
     );
 
-    if (sectionRef.current) observer.observe(sectionRef.current);
+    observer.observe(sectionRef.current);
     return () => observer.disconnect();
-  }, []);
+  }, [loading, leaders.length]);
 
-  const displayedMembers = teamMembers.slice(0, limit);
+  const displayedLeaders = leaders.slice(0, limit);
 
   return (
     <section id="leadership" className="relative py-24 bg-white overflow-hidden">
@@ -81,87 +101,114 @@ export default function LeadershipSection({
           />
         )}
 
-        <div
-          ref={sectionRef}
-          className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-        >
-          {displayedMembers.map((member, index) => {
-            const [gradFrom, gradTo] = gradientPairs[index % gradientPairs.length];
-            const initial = member.name.charAt(0).toUpperCase();
-
-            return (
-              <div
-                key={member.name}
-                className="team-card opacity-0 translate-y-8 transition-all duration-500 ease-out"
-              >
-                <div className="glass-card rounded-2xl p-6 flex flex-col items-center text-center h-full group">
-                  {/* Gradient Placeholder Avatar */}
-                  <div
-                    className="w-20 h-20 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-4 transition-transform duration-300 group-hover:scale-110"
-                    style={{
-                      background: `linear-gradient(135deg, ${gradFrom}, ${gradTo})`,
-                    }}
-                  >
-                    {initial}
-                  </div>
-
-                  {/* Role Badge */}
-                  <span
-                    className="inline-block text-[10px] font-semibold tracking-[0.15em] uppercase px-3 py-1 rounded-full mb-3"
-                    style={{
-                      color: gradFrom,
-                      border: `1px solid ${gradFrom}33`,
-                      background: `${gradFrom}11`,
-                    }}
-                  >
-                    {member.role}
-                  </span>
-
-                  {/* Name */}
-                  <h3 className="text-gray-900 font-semibold text-lg mb-2">
-                    {member.name}
-                  </h3>
-
-                  {/* Bio */}
-                  <p className="text-gray-600 text-sm leading-relaxed mb-5 flex-1">
-                    {member.bio}
-                  </p>
-
-                  {/* Social Icons */}
-                  <div className="flex items-center gap-3">
-                    {member.socials.linkedin && (
-                      <a
-                        href={member.socials.linkedin}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-gray-500 hover:text-riara-500 hover:bg-riara-100 transition-all duration-300"
-                        aria-label={`${member.name} LinkedIn`}
-                      >
-                        {socialIcon("linkedin")}
-                      </a>
-                    )}
-                    {member.socials.twitter && (
-                      <a
-                        href={member.socials.twitter}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-gray-500 hover:text-riara-500 hover:bg-riara-100 transition-all duration-300"
-                        aria-label={`${member.name} Twitter`}
-                      >
-                        {socialIcon("twitter")}
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {showViewAll && teamMembers.length > limit && (
-          <div className="mt-14 text-center">
-            <ViewAllButton href="/leadership" label="View Full Team" />
+        {loading ? (
+          <div className="mt-16 text-center py-12 text-gray-500">Loading team…</div>
+        ) : error ? (
+          <div className="mt-16 text-center py-12 text-gray-500">{error}</div>
+        ) : displayedLeaders.length === 0 ? (
+          <div className="mt-16 text-center py-12 text-gray-500">
+            Our leadership team will be announced soon.
           </div>
+        ) : (
+          <>
+            <div
+              ref={sectionRef}
+              className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+            >
+              {displayedLeaders.map((member, index) => {
+                const [gradFrom, gradTo] = gradientPairs[index % gradientPairs.length];
+                const name = String(member.name || "Team Member");
+                const role = String(member.role || "");
+                const bio = String(member.bio || "");
+                const image = String(member.image || "");
+                const linkedin = String(member.socialLinkedin || "");
+                const twitter = String(member.socialTwitter || "");
+                const initial = name.charAt(0).toUpperCase();
+
+                return (
+                  <div
+                    key={(member.$id as string) || index}
+                    className="team-card opacity-0 translate-y-8 transition-all duration-500 ease-out"
+                  >
+                    <div className="glass-card rounded-2xl p-6 flex flex-col items-center text-center h-full group">
+                      {/* Avatar / Photo */}
+                      <div
+                        className="w-20 h-20 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-4 transition-transform duration-300 group-hover:scale-110 overflow-hidden"
+                        style={
+                          image
+                            ? undefined
+                            : { background: `linear-gradient(135deg, ${gradFrom}, ${gradTo})` }
+                        }
+                      >
+                        {image ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={image} alt={name} className="w-full h-full object-cover" />
+                        ) : (
+                          initial
+                        )}
+                      </div>
+
+                      {/* Role Badge */}
+                      {role && (
+                        <span
+                          className="inline-block text-[10px] font-semibold tracking-[0.15em] uppercase px-3 py-1 rounded-full mb-3"
+                          style={{
+                            color: gradFrom,
+                            border: `1px solid ${gradFrom}33`,
+                            background: `${gradFrom}11`,
+                          }}
+                        >
+                          {role}
+                        </span>
+                      )}
+
+                      {/* Name */}
+                      <h3 className="text-gray-900 font-semibold text-lg mb-2">{name}</h3>
+
+                      {/* Bio */}
+                      {bio && (
+                        <p className="text-gray-600 text-sm leading-relaxed mb-5 flex-1">{bio}</p>
+                      )}
+
+                      {/* Social Icons */}
+                      {(linkedin || twitter) && (
+                        <div className="flex items-center gap-3">
+                          {linkedin && (
+                            <a
+                              href={linkedin}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="w-8 h-8 rounded-full flex items-center justify-center text-gray-500 hover:text-riara-500 hover:bg-riara-100 transition-all duration-300"
+                              aria-label={`${name} LinkedIn`}
+                            >
+                              {socialIcon("linkedin")}
+                            </a>
+                          )}
+                          {twitter && (
+                            <a
+                              href={twitter}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="w-8 h-8 rounded-full flex items-center justify-center text-gray-500 hover:text-riara-500 hover:bg-riara-100 transition-all duration-300"
+                              aria-label={`${name} Twitter`}
+                            >
+                              {socialIcon("twitter")}
+                            </a>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {showViewAll && leaders.length > limit && (
+              <div className="mt-14 text-center">
+                <ViewAllButton href="/leadership" label="View Full Team" />
+              </div>
+            )}
+          </>
         )}
       </div>
     </section>

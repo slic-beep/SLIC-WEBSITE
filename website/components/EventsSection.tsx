@@ -20,6 +20,31 @@ interface EventsSectionProps {
   showHeader?: boolean;
 }
 
+function formatEventDate(value: unknown, timeValue?: unknown): string {
+  if (typeof value !== "string" || !value.trim()) return "TBD";
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+
+  const formattedDate = date.toLocaleDateString("en", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  if (typeof timeValue === "string" && timeValue.trim()) {
+    const time = new Date(`1970-01-01T${timeValue.trim()}`);
+    if (!Number.isNaN(time.getTime())) {
+      return `${formattedDate} · ${time.toLocaleTimeString("en", {
+        hour: "numeric",
+        minute: "2-digit",
+      })}`;
+    }
+  }
+
+  return formattedDate;
+}
+
 export default function EventsSection({
   limit = 4,
   showViewAll = true,
@@ -104,8 +129,18 @@ export default function EventsSection({
                   className="glass-card rounded-2xl p-6 animate-fade-in-up"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
+                  {(() => {
+                    const banner = String(event.bannerImage || "");
+                    return banner ? (
+                      <div className="relative w-full h-40 rounded-xl overflow-hidden mb-4">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={banner} alt={String(event.title || "SLIC Event")} className="w-full h-full object-cover" />
+                      </div>
+                    ) : null;
+                  })()}
+
                   <p className="text-sm font-bold text-gray-700 mb-3">
-                    {String(event.date || "TBD")}
+                    {formatEventDate(event.date, event.time)}
                   </p>
 
                   <span

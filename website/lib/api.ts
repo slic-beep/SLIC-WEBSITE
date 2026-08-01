@@ -66,7 +66,7 @@ export async function applyMembership(payload: Record<string, unknown>) {
 }
 
 export async function getMemberProfile(token: string) {
-  return fetchWithAuth<ApiResponse<Record<string, unknown>>>('/members/profile', token);
+  return fetchWithAuth<ApiResponse<{ account: Record<string, unknown>; member: Record<string, unknown> | null }>>('/members/profile', token);
 }
 
 // ─── Public data ───
@@ -91,8 +91,23 @@ export async function getPublicPartners() {
   return res;
 }
 
+export async function getPublicLeadership() {
+  const res = await fetchJson<ApiResponse<Array<Record<string, unknown>>>>('/leadership/public');
+  return res;
+}
+
 export async function getPublicAnnouncements() {
   const res = await fetchJson<ApiResponse<Array<Record<string, unknown>>>>('/announcements/latest');
+  return res;
+}
+
+export async function getPublicHeroImages() {
+  const res = await fetchJson<ApiResponse<Array<Record<string, unknown>>>>('/hero-images');
+  return res;
+}
+
+export async function getPublicImpactMetrics() {
+  const res = await fetchJson<ApiResponse<Array<Record<string, unknown>>>>('/impact-metrics');
   return res;
 }
 
