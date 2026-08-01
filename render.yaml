@@ -1,0 +1,42 @@
+services:
+  - type: web
+    name: slic-website
+    env: node
+    rootDir: website
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run start -- --port $PORT
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: NEXT_PUBLIC_API_URL
+        value: https://YOUR_BACKEND_URL.onrender.com/api
+
+  - type: web
+    name: slic-admin
+    env: node
+    rootDir: admindashboard
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run start -- --port $PORT
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: NEXT_PUBLIC_API_URL
+        value: https://YOUR_BACKEND_URL.onrender.com/api
+
+  - type: web
+    name: slic-backend
+    env: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: PORT
+        value: 10000
