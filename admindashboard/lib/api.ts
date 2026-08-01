@@ -1,4 +1,10 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+function normalizeApiBaseUrl(input: string) {
+  const value = (input || 'http://localhost:4000/api').trim().replace(/\/+$/, '');
+  if (value.endsWith('/api')) return value;
+  return `${value}/api`;
+}
+
+const API_BASE_URL = normalizeApiBaseUrl(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api');
 
 type ApiResponse<T> = {
   success: boolean;
