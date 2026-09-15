@@ -113,6 +113,7 @@ export type EventRecord = {
   date: string;
   time?: string;
   location: string;
+    videoUrl?: string;
   bannerImage?: string;
   registrationLink?: string;
   maxParticipants?: number;

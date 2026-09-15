@@ -12,6 +12,7 @@ function normalizeEvent(event) {
     time: event.time || '',
     eventType: event.eventType || '',
     bannerImage: event.bannerImage || '',
+    videoUrl: event.videoUrl || '',
     registrationLink: event.registrationLink || '',
     maxParticipants: event.maxParticipants ?? null,
   };
@@ -32,6 +33,7 @@ async function createEvent(payload) {
     time: payload.time || '',
     location: payload.location || '',
     bannerImage: payload.bannerImage || '',
+    videoUrl: payload.videoUrl || '',
     registrationLink: payload.registrationLink || '',
     maxParticipants: payload.maxParticipants ?? null,
     status: payload.status || 'Upcoming',

@@ -13,6 +13,7 @@ export default function EventsPage() {
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
   const [eventType, setEventType] = useState("");
+    const [videoUrl, setVideoUrl] = useState("");
   const [bannerImage, setBannerImage] = useState("");
   const [registrationLink, setRegistrationLink] = useState("");
   const [maxParticipants, setMaxParticipants] = useState(0);
@@ -46,6 +47,7 @@ export default function EventsPage() {
         name,
         description,
         eventType,
+          videoUrl,
         date,
         time,
         location,
@@ -62,6 +64,7 @@ export default function EventsPage() {
       setLocation("");
       setDescription("");
       setEventType("");
+        setVideoUrl("");
       setBannerImage("");
       setRegistrationLink("");
       setMaxParticipants(0);
@@ -164,6 +167,16 @@ export default function EventsPage() {
               />
             </div>
             <ImageUpload value={bannerImage} onChange={setBannerImage} bucket="eventBanners" label="Banner image" />
+                        <div>
+                          <label className="text-xs text-gray-500">Past event video URL</label>
+                          <input
+                            type="url"
+                            value={videoUrl}
+                            onChange={(event) => setVideoUrl(event.target.value)}
+                            className="mt-1 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none focus:border-riara-400"
+                            placeholder="YouTube, Vimeo, or MP4 URL"
+                          />
+                        </div>
             <div>
               <label className="text-xs text-gray-500">Registration link</label>
               <input

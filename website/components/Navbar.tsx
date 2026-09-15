@@ -50,7 +50,7 @@ export default function Navbar() {
             <a
               key={link.label}
               href={link.href}
-              className="px-3 py-2 text-sm text-gray-600 hover:text-gray-900 rounded-lg transition-colors duration-200"
+              className="px-3 py-2 text-sm text-white hover:text-gray-900 rounded-lg transition-colors duration-200"
             >
               {link.label}
             </a>
@@ -111,7 +111,7 @@ export default function Navbar() {
               key={link.label}
               href={link.href}
               onClick={() => setMobileOpen(false)}
-              className="block px-4 py-3 text-sm text-gray-600 hover:text-gray-900 rounded-lg transition-colors"
+              className="block px-4 py-3 text-sm text-white hover:text-gray-900 rounded-lg transition-colors"
             >
               {link.label}
             </a>

@@ -45,6 +45,26 @@ function formatEventDate(value: unknown, timeValue?: unknown): string {
   return formattedDate;
 }
 
+function getVideoEmbedUrl(value: string): string | null {
+  try {
+    const url = new URL(value);
+    if (url.hostname.includes("youtube.com")) {
+      const videoId = url.searchParams.get("v");
+      return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+    }
+    if (url.hostname === "youtu.be") {
+      return `https://www.youtube.com/embed/${url.pathname.slice(1)}`;
+    }
+    if (url.hostname.includes("vimeo.com")) {
+      const videoId = url.pathname.split("/").filter(Boolean).pop();
+      return videoId ? `https://player.vimeo.com/video/${videoId}` : null;
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
 export default function EventsSection({
   limit = 4,
   showViewAll = true,
@@ -61,7 +81,7 @@ export default function EventsSection({
       try {
         const result = await getPublicEvents();
         setEvents(result?.data ?? []);
-      } catch (err) {
+      } catch {
         setError("Unable to load events right now.");
       } finally {
         setLoading(false);
@@ -131,12 +151,33 @@ export default function EventsSection({
                 >
                   {(() => {
                     const banner = String(event.bannerImage || "");
-                    return banner ? (
-                      <div className="relative w-full h-40 rounded-xl overflow-hidden mb-4">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={banner} alt={String(event.title || "SLIC Event")} className="w-full h-full object-cover" />
+                    const video = String(event.videoUrl || event.video || "");
+                    const embedUrl = getVideoEmbedUrl(video);
+                    if (!banner && !video) return null;
+
+                    return (
+                      <div className="relative aspect-video w-full overflow-hidden rounded-xl mb-5 bg-gray-100">
+                        {video && embedUrl ? (
+                          <iframe
+                            src={embedUrl}
+                            title={`${String(event.title || "SLIC Event")} video`}
+                            className="h-full w-full"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowFullScreen
+                          />
+                        ) : video ? (
+                          <video src={video} controls preload="metadata" className="h-full w-full object-cover" />
+                        ) : (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={banner} alt={String(event.title || "SLIC Event")} className="h-full w-full object-cover" />
+                        )}
+                        {activeTab === "past" && (
+                          <span className="absolute left-3 top-3 rounded-full bg-black/70 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-white">
+                            {video ? "Event video" : "Event moments"}
+                          </span>
+                        )}
                       </div>
-                    ) : null;
+                    );
                   })()}
 
                   <p className="text-sm font-bold text-gray-700 mb-3">

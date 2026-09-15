@@ -14,18 +14,30 @@ const fallbackHeroImages = [
   "/images/image7.jpeg",
 ];
 
+type HeroImage = {
+  imageUrl: string;
+  title?: string;
+  caption?: string;
+};
+
 export default function HeroSection() {
   const particlesRef = useRef<HTMLDivElement>(null);
-  const [heroImages, setHeroImages] = useState<Array<{ imageUrl?: string; title?: string; caption?: string }>>([]);
+  const [heroImages, setHeroImages] = useState<HeroImage[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     async function loadHeroImages() {
       try {
         const response = await getPublicHeroImages();
-        const images = (response?.data ?? []).filter((item) => item.imageUrl || item.image || item.url);
+        const images = (response?.data ?? [])
+          .map((item) => ({
+            imageUrl: String(item.imageUrl || item.image || item.url || ""),
+            title: typeof item.title === "string" ? item.title : undefined,
+            caption: typeof item.caption === "string" ? item.caption : undefined,
+          }))
+          .filter((item) => item.imageUrl);
         if (images.length > 0) {
-          setHeroImages(images as Array<{ imageUrl?: string; title?: string; caption?: string }>);
+          setHeroImages(images);
         } else {
           setHeroImages(fallbackHeroImages.map((src) => ({ imageUrl: src })));
         }
@@ -82,14 +94,19 @@ export default function HeroSection() {
           return (
             <div
               key={`${src}-${i}`}
-              className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+              className="absolute inset-0 h-full w-full transition-opacity duration-1000 ease-in-out"
               style={{ opacity: i === currentIndex ? 1 : 0 }}
             >
               <img
                 src={src}
                 alt={image.title || "SLIC hero image"}
-                className="w-full h-full object-cover bg-black"
+                className="block h-full w-full object-cover object-center bg-black"
                 loading={i === 0 ? "eager" : "lazy"}
+                onError={(event) => {
+                  const fallback = fallbackHeroImages[i % fallbackHeroImages.length];
+                  if (event.currentTarget.src.endsWith(fallback)) return;
+                  event.currentTarget.src = fallback;
+                }}
               />
             </div>
           );

@@ -141,6 +141,7 @@ async function main() {
         { key: 'time', type: 'string', size: 64, required: false },
         { key: 'location', type: 'string', size: 255, required: false },
         { key: 'bannerImage', type: 'string', size: 512, required: false },
+          { key: 'videoUrl', type: 'string', size: 512, required: false },
         { key: 'registrationLink', type: 'string', size: 512, required: false },
         { key: 'maxParticipants', type: 'integer', required: false },
         { key: 'status', type: 'string', size: 32, required: false },

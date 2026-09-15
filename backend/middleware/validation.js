@@ -1,3 +1,4 @@
+  const { name, date, location, description, eventType, bannerImage, videoUrl, registrationLink, maxParticipants, status } = req.body;
 function sendValidationError(res, errors) {
   return res.status(400).json({
     success: false,
@@ -172,6 +173,9 @@ function validateEventPayload(req, res, next) {
   }
   if (bannerImage !== undefined && bannerImage !== "" && !validateUrl(bannerImage)) {
     errors.push({ field: "bannerImage", message: "Banner image must be a valid URL." });
+  }
+  if (videoUrl !== undefined && videoUrl !== "" && !validateUrl(videoUrl)) {
+    errors.push({ field: "videoUrl", message: "Video URL must be a valid URL." });
   }
   if (registrationLink !== undefined && registrationLink !== "" && !validateUrl(registrationLink)) {
     errors.push({ field: "registrationLink", message: "Registration link must be a valid URL." });
